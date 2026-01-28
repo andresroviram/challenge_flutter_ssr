@@ -37,6 +37,18 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    dependencies {
+        // AndroidX Core (para ContextCompat, ActivityCompat)
+        implementation("androidx.core:core-ktx:1.13.1")
+
+        // AndroidX Lifecycle (para LifecycleOwner)
+        implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
+        // AndroidX AppCompat (soporte adicional)
+        implementation("androidx.appcompat:appcompat:1.7.0")
+
+    }
 }
 
 flutter {
