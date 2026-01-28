@@ -81,7 +81,7 @@ build_runner: ^2.4.17             # Herramienta de generación
 
 - Flutter SDK >=3.10.7
 - Dart SDK >=3.10.0
-- Android Studio / Xcode (para desarrollo nativo)
+- Visual Studio Code / Xcode (para desarrollo nativo)
 - Git
 
 ### 2. Instalación
