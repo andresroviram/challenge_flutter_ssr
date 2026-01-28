@@ -15,9 +15,7 @@ Aplicación Flutter que consume la API de JSONPlaceholder para mostrar posts con
 ## Video Demo
 
 <p align="center">
-  <a href="https://youtu.be/P-eW860LmJI" target="_blank">
-    <img src="https://img.youtube.com/vi/P-eW860LmJI/0.jpg" alt="Demo en YouTube" style="width:100%;max-width:900px;">
-  </a>
+  <iframe width="100%" height="500" src="https://www.youtube.com/embed/P-eW860LmJI" title="Demo en YouTube" frameborder="0" allowfullscreen></iframe>
 </p>
 
 ## 📋 Características
