@@ -36,6 +36,7 @@ El proyecto implementa **Clean Architecture** con las siguientes capas:
 
 ```
 lib/
+├── components/                    # Componentes reutilizables (UI)
 ├── core/                          # Funcionalidades compartidas
 │   ├── error/                     # Manejo de errores (Failures)
 │   ├── native/                    # Servicios nativos (Pigeon)
