@@ -12,6 +12,10 @@ Aplicación Flutter que consume la API de JSONPlaceholder para mostrar posts con
 <img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.17.41.png" width="40%">
 </p>
 
+## Video Demo
+
+[![Demo en YouTube](https://img.youtube.com/vi/P-eW860LmJI/0.jpg)](https://youtu.be/P-eW860LmJI)
+
 ## 📋 Características
 
 - ✅ **Lista de Posts**: Obtención y visualización de posts desde JSONPlaceholder API
