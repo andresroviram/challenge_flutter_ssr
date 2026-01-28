@@ -2,6 +2,16 @@
 
 Aplicación Flutter que consume la API de JSONPlaceholder para mostrar posts con sus comentarios, permite dar "likes" con persistencia local y envía notificaciones nativas al dar like mediante comunicación tipada con Pigeon.
 
+## 🎨 Capturas de Pantalla
+
+<br>
+<p align="center">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.14.02.png" width="40%">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.43.png" width="40%">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.52.png" width="40%">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.17.41.png" width="40%">
+</p>
+
 ## 📋 Características
 
 - ✅ **Lista de Posts**: Obtención y visualización de posts desde JSONPlaceholder API
@@ -233,16 +243,6 @@ Este proyecto fue desarrollado con asistencia de **GitHub Copilot** (Claude Sonn
 - `GET /posts` - Obtener todos los posts
 - `GET /posts/{id}` - Obtener post por ID
 - `GET /posts/{id}/comments` - Obtener comentarios de un post
-
-## 🎨 Capturas de Pantalla
-
-<br>
-<p align="center">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.14.02.png" width="40%">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.43.png" width="40%">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.52.png" width="40%">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.17.41.png" width="40%">
-</p>
 
 ## 🐛 Problemas Conocidos
 
