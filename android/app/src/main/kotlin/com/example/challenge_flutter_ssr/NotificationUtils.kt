@@ -11,7 +11,9 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
-fun createNotificationChannel(context: Context, channelId: String, channelName: String, channelDescription: String) {
+fun createNotificationChannel(context: Context, channelId: String) {
+    val channelName = "Likes Notifications"
+    val channelDescription = "Notifications for liked posts"
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val importance = NotificationManager.IMPORTANCE_MAX
         val channel = NotificationChannel(channelId, channelName, importance).apply {
