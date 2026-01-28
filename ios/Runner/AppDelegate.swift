@@ -9,16 +9,12 @@ import AudioToolbox
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // IMPORTANTE: Llamar a super primero
     let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
     GeneratedPluginRegistrant.register(with: self)
 
     // Configurar el delegate para recibir notificaciones cuando la app está en primer plano
     UNUserNotificationCenter.current().delegate = self
-
-    // Solicitar permisos de notificación al inicio
-    requestNotificationPermissionsAtLaunch()
 
     let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
     let binaryMessenger = controller.binaryMessenger
@@ -27,16 +23,6 @@ import AudioToolbox
     return result
   }
 
-  // Solicitar permisos al iniciar la app
-  private func requestNotificationPermissionsAtLaunch() {
-    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .provisional]) { granted, error in
-      if granted {
-        DispatchQueue.main.async {
-          UIApplication.shared.registerForRemoteNotifications()
-        }
-      }
-    }
-  }
 
   // MARK: - UNUserNotificationCenterDelegate
 
