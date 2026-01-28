@@ -28,13 +28,10 @@ class NotificationPayload {
 /// Host API para comunicación Flutter -> Nativo
 @HostApi()
 abstract class NotificationApi {
-  /// Muestra una notificación local en el dispositivo
   void showNotification(NotificationPayload payload);
 
-  /// Solicita permisos de notificación (especialmente para iOS)
   @async
   bool requestNotificationPermissions();
 
-  /// Abre la configuración del canal de notificaciones
   void openNotificationSettings();
 }

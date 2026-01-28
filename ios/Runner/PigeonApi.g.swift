@@ -128,8 +128,6 @@ func deepHashPigeonApi(value: Any?, hasher: inout Hasher) {
 
     
 
-/// Payload para enviar notificaciones locales
-///
 /// Generated class from Pigeon that represents data sent in messages.
 struct NotificationPayload: Hashable {
   var id: String
@@ -204,11 +202,8 @@ class PigeonApiPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol NotificationApi {
-  /// Muestra una notificación local en el dispositivo
   func showNotification(payload: NotificationPayload) throws
-  /// Solicita permisos de notificación (especialmente para iOS)
   func requestNotificationPermissions(completion: @escaping (Result<Bool, Error>) -> Void)
-  /// Abre la configuración del canal de notificaciones
   func openNotificationSettings() throws
 }
 
@@ -218,7 +213,6 @@ class NotificationApiSetup {
   /// Sets up an instance of `NotificationApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: NotificationApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    /// Muestra una notificación local en el dispositivo
     let showNotificationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.challenge_flutter_ssr.NotificationApi.showNotification\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       showNotificationChannel.setMessageHandler { message, reply in
@@ -234,7 +228,6 @@ class NotificationApiSetup {
     } else {
       showNotificationChannel.setMessageHandler(nil)
     }
-    /// Solicita permisos de notificación (especialmente para iOS)
     let requestNotificationPermissionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.challenge_flutter_ssr.NotificationApi.requestNotificationPermissions\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       requestNotificationPermissionsChannel.setMessageHandler { _, reply in
@@ -250,7 +243,6 @@ class NotificationApiSetup {
     } else {
       requestNotificationPermissionsChannel.setMessageHandler(nil)
     }
-    /// Abre la configuración del canal de notificaciones
     let openNotificationSettingsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.challenge_flutter_ssr.NotificationApi.openNotificationSettings\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       openNotificationSettingsChannel.setMessageHandler { _, reply in

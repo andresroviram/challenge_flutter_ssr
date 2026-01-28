@@ -16,6 +16,7 @@ class PostsListScreen extends ConsumerStatefulWidget {
 }
 
 class _PostsListScreenState extends ConsumerState<PostsListScreen> {
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -29,6 +30,7 @@ class _PostsListScreenState extends ConsumerState<PostsListScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -40,54 +42,72 @@ class _PostsListScreenState extends ConsumerState<PostsListScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SearchBarWidget(
-                        controller: _searchController,
-                        onChanged: (value) {
-                          ref
-                              .read(postsNotifierProvider.notifier)
-                              .searchPosts(value);
-                        },
-                        onClear: () {
-                          _searchController.clear();
-                          ref
-                              .read(postsNotifierProvider.notifier)
-                              .searchPosts('');
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    GlassContainer(
-                      padding: const EdgeInsets.all(4),
-                      margin: EdgeInsets.zero,
-                      blur: 15,
-                      opacity: 0.25,
-                      child: IconButton(
-                        icon: const Icon(Icons.notifications_active),
-                        onPressed: () {
-                          NotificationSettingsHelper.showPopOnScreenGuide(
-                            context,
-                            onOpenSettings: () {
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: SizedBox.expand(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SearchBarWidget(
+                            controller: _searchController,
+                            onChanged: (value) {
                               ref
-                                  .read(notificationApiProvider)
-                                  .openNotificationSettings();
+                                  .read(postsNotifierProvider.notifier)
+                                  .searchPosts(value);
                             },
-                          );
-                        },
-                        tooltip: 'Configurar notificaciones emergentes',
-                      ),
+                            onClear: () {
+                              _searchController.clear();
+                              ref
+                                  .read(postsNotifierProvider.notifier)
+                                  .searchPosts('');
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        GlassContainer(
+                          padding: const EdgeInsets.all(4),
+                          margin: EdgeInsets.zero,
+                          blur: 15,
+                          opacity: 0.25,
+                          child: IconButton(
+                            icon: const Icon(Icons.notifications_active),
+                            onPressed: () {
+                              NotificationSettingsHelper.showPopOnScreenGuide(
+                                context,
+                                onOpenSettings: () {
+                                  ref
+                                      .read(notificationApiProvider)
+                                      .openNotificationSettings();
+                                },
+                              );
+                            },
+                            tooltip: 'Configurar notificaciones emergentes',
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Expanded(
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification is ScrollStartNotification) {
+                          FocusScope.of(context).unfocus();
+                        }
+                        return false;
+                      },
+                      child: _buildBody(postsState),
+                    ),
+                  ),
+                ],
               ),
-              Expanded(child: _buildBody(postsState)),
-            ],
+            ),
           ),
         ),
       ),
@@ -147,6 +167,7 @@ class _PostsListScreenState extends ConsumerState<PostsListScreen> {
             await ref.read(postsNotifierProvider.notifier).refreshPosts();
           },
           child: ListView.builder(
+            controller: _scrollController,
             itemCount: state.filteredPosts.length,
             itemBuilder: (context, index) {
               final post = state.filteredPosts[index];

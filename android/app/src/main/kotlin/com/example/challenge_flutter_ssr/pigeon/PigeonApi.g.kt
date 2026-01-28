@@ -78,11 +78,7 @@ class FlutterError (
   val details: Any? = null
 ) : Throwable()
 
-/**
- * Payload para enviar notificaciones locales
- *
- * Generated class from Pigeon that represents data sent in messages.
- */
+/** Generated class from Pigeon that represents data sent in messages. */
 data class NotificationPayload (
   val id: String,
   val title: String,
@@ -144,11 +140,8 @@ private open class PigeonApiPigeonCodec : StandardMessageCodec() {
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface NotificationApi {
-  /** Muestra una notificación local en el dispositivo */
   fun showNotification(payload: NotificationPayload)
-  /** Solicita permisos de notificación (especialmente para iOS) */
   fun requestNotificationPermissions(callback: (Result<Boolean>) -> Unit)
-  /** Abre la configuración del canal de notificaciones */
   fun openNotificationSettings()
 
   companion object {

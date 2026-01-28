@@ -46,13 +46,12 @@ import AudioToolbox
     willPresent notification: UNNotification,
     withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
   ) {
-    // Forzar que aparezca el banner con sonido y vibración
+    // Mostrar banner, sonido, badge y que quede en el panel de notificaciones
     if #available(iOS 14.0, *) {
-      completionHandler([.banner, .sound, .badge])
+      completionHandler([.banner, .sound, .badge, .list])
     } else {
       completionHandler([.alert, .sound, .badge])
     }
-
     // Vibrar el dispositivo
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
   }
@@ -76,10 +75,13 @@ import AudioToolbox
       content.threadIdentifier = "likes_notifications"
     }
 
+    // Usar trigger con retraso para que la notificación quede en el panel
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+
     let request = UNNotificationRequest(
       identifier: payload.id,
       content: content,
-      trigger: nil
+      trigger: trigger
     )
 
     UNUserNotificationCenter.current().add(request)

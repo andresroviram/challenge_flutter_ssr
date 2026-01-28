@@ -29,7 +29,6 @@ bool _deepEquals(Object? a, Object? b) {
 }
 
 
-/// Payload para enviar notificaciones locales
 class NotificationPayload {
   NotificationPayload({
     required this.id,
@@ -122,7 +121,6 @@ class NotificationApi {
 
   final String pigeonVar_messageChannelSuffix;
 
-  /// Muestra una notificación local en el dispositivo
   Future<void> showNotification(NotificationPayload payload) async {
     final pigeonVar_channelName = 'dev.flutter.pigeon.challenge_flutter_ssr.NotificationApi.showNotification$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -145,7 +143,6 @@ class NotificationApi {
     }
   }
 
-  /// Solicita permisos de notificación (especialmente para iOS)
   Future<bool> requestNotificationPermissions() async {
     final pigeonVar_channelName = 'dev.flutter.pigeon.challenge_flutter_ssr.NotificationApi.requestNotificationPermissions$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -173,7 +170,6 @@ class NotificationApi {
     }
   }
 
-  /// Abre la configuración del canal de notificaciones
   Future<void> openNotificationSettings() async {
     final pigeonVar_channelName = 'dev.flutter.pigeon.challenge_flutter_ssr.NotificationApi.openNotificationSettings$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
