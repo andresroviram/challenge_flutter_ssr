@@ -238,10 +238,10 @@ Este proyecto fue desarrollado con asistencia de **GitHub Copilot** (Claude Sonn
 
 <br>
 <p align="center">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.14.02.png" width="50%">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.43.png" width="50%">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.52.png" width="50%">
-<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.17.41.png" width="50%">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.14.02.png" width="40%">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.43.png" width="40%">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.16.52.png" width="40%">
+<img src="screenshots/Simulator Screenshot - iPhone 17 Pro - 2026-01-27 at 19.17.41.png" width="40%">
 </p>
 
 ## 🐛 Problemas Conocidos
