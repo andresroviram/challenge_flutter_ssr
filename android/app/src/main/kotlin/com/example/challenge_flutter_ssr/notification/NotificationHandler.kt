@@ -1,7 +1,8 @@
-package com.example.challenge_flutter_ssr
+package com.example.challenge_flutter_ssr.notification
 
 import com.example.challenge_flutter_ssr.pigeon.NotificationApi
 import com.example.challenge_flutter_ssr.pigeon.NotificationPayload
+import com.example.challenge_flutter_ssr.notification.NotificationHelper
 import android.content.Context
 
 class NotificationHandler(

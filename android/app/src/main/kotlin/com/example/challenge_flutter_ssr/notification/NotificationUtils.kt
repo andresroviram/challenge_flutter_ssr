@@ -1,4 +1,4 @@
-package com.example.challenge_flutter_ssr
+package com.example.challenge_flutter_ssr.notification
 
 import android.Manifest
 import android.app.Activity

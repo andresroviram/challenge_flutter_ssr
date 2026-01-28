@@ -1,4 +1,4 @@
-package com.example.challenge_flutter_ssr
+package com.example.challenge_flutter_ssr.notification
 
 import android.Manifest
 import android.app.PendingIntent
@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.challenge_flutter_ssr.pigeon.NotificationPayload
+import com.example.challenge_flutter_ssr.MainActivity
 
 object NotificationHelper {
     fun showNotification(
