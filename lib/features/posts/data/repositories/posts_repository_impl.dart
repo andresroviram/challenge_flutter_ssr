@@ -2,6 +2,8 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/post_entity.dart';
 import '../../domain/entities/comment_entity.dart';
+import '../models/post_model.dart';
+import '../models/comment_model.dart';
 import '../../domain/repositories/posts_repository.dart';
 import '../datasources/posts_remote_datasource.dart';
 import '../datasources/posts_local_datasource.dart';
@@ -26,7 +28,6 @@ class PostsRepositoryImpl implements PostsRepository {
             (model) => model.toEntity(isLiked: likedPostIds.contains(model.id)),
           )
           .toList();
-
       return Right(posts);
     } on Failure catch (e) {
       return Left(e);

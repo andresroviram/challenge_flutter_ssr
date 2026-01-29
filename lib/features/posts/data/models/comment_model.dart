@@ -24,7 +24,9 @@ class CommentModel {
       _$CommentModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CommentModelToJson(this);
+}
 
+extension CommentModelMapper on CommentModel {
   CommentEntity toEntity() => CommentEntity(
     id: id,
     postId: postId,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../components/glass_container.dart';
+import '../../domain/entities/entities.dart';
 import '../notifiers/post_detail_notifier.dart';
 import '../state/post_detail_state.dart';
 import '../widgets/comment_list_item.dart';
@@ -49,57 +50,62 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   }
 
   Widget _buildBody(PostDetailState state) {
-    switch (state.status) {
-      case PostDetailStatus.initial:
-      case PostDetailStatus.loading:
-        return const Center(child: CircularProgressIndicator());
-
-      case PostDetailStatus.error:
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(
-                state.errorMessage ?? 'Ocurrió un error',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  ref
-                      .read(postDetailNotifierProvider(widget.postId).notifier)
-                      .loadPostDetail(widget.postId);
-                },
-                child: const Text('Reintentar'),
-              ),
-            ],
-          ),
-        );
-
-      case PostDetailStatus.success:
-        if (state.post == null) {
-          return const Center(child: Text('No se pudo cargar el post'));
-        }
-
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildPostCard(state),
-              const SizedBox(height: 16),
-              _buildCommentsSection(state),
-            ],
-          ),
-        );
-    }
+    return state.when(
+      initial: () => _buildLoadingState(),
+      loading: () => _buildLoadingState(),
+      success: _buildSuccessState,
+      error: _buildErrorState,
+    );
   }
 
-  Widget _buildPostCard(PostDetailState state) {
-    final post = state.post!;
+  Widget _buildLoadingState() {
+    return const Center(child: CircularProgressIndicator());
+  }
 
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              ref
+                  .read(postDetailNotifierProvider(widget.postId).notifier)
+                  .loadPostDetail(widget.postId);
+            },
+            child: const Text('Reintentar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuccessState(
+    PostEntity post,
+    List<CommentEntity> comments,
+    bool isTogglingLike,
+  ) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPostCard(post, isTogglingLike),
+          const SizedBox(height: 16),
+          _buildCommentsSection(comments),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostCard(PostEntity post, bool isTogglingLike) {
     return GlassContainer(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -117,11 +123,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           const SizedBox(height: 16),
           Text(post.body, style: Theme.of(context).textTheme.bodyLarge),
           const SizedBox(height: 24),
-
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: state.isTogglingLike
+              onPressed: isTogglingLike
                   ? null
                   : () {
                       ref
@@ -130,7 +135,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                           )
                           .toggleLike();
                     },
-              icon: state.isTogglingLike
+              icon: isTogglingLike
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -152,14 +157,14 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     );
   }
 
-  Widget _buildCommentsSection(PostDetailState state) {
+  Widget _buildCommentsSection(List<CommentEntity> comments) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'Comentarios (${state.comments.length})',
+            'Comentarios (${comments.length})',
             style: Theme.of(
               context,
             ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -167,7 +172,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         ),
         const SizedBox(height: 8),
 
-        if (state.comments.isEmpty)
+        if (comments.isEmpty)
           const Padding(
             padding: EdgeInsets.all(16),
             child: Center(child: Text('No hay comentarios disponibles')),
@@ -176,9 +181,9 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: state.comments.length,
+            itemCount: comments.length,
             itemBuilder: (context, index) {
-              final comment = state.comments[index];
+              final comment = comments[index];
               return CommentListItem(comment: comment);
             },
           ),

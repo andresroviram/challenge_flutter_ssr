@@ -7,28 +7,19 @@ class PostsNotifier extends Notifier<PostsState> {
   @override
   PostsState build() {
     loadPosts();
-    return const PostsState();
+    return const PostsState.initial();
   }
 
   PostsUseCase get _useCase => ref.read(postsUseCaseProvider);
 
   Future<void> loadPosts() async {
-    state = state.copyWith(status: PostsStatus.loading);
+    state = const PostsState.loading();
 
     final result = await _useCase.getPosts();
 
     result.fold(
-      (failure) => state = state.copyWith(
-        status: PostsStatus.error,
-        errorMessage: failure.message,
-      ),
-      (posts) {
-        state = state.copyWith(
-          status: PostsStatus.success,
-          posts: posts,
-          filteredPosts: posts,
-        );
-      },
+      (failure) => state = PostsState.error(failure.message),
+      (posts) => state = PostsState.success(posts: posts, filteredPosts: posts),
     );
   }
 
@@ -37,40 +28,60 @@ class PostsNotifier extends Notifier<PostsState> {
   }
 
   void searchPosts(String query) {
-    if (query.isEmpty) {
-      state = state.copyWith(searchQuery: '', filteredPosts: state.posts);
-      return;
-    }
+    state.maybeWhen(
+      success: (posts, filteredPosts, searchQuery) {
+        if (query.isEmpty) {
+          state = PostsState.success(
+            posts: posts,
+            filteredPosts: posts,
+            searchQuery: '',
+          );
+          return;
+        }
 
-    final filtered = state.posts.where((post) {
-      final titleLower = post.title.toLowerCase();
-      final bodyLower = post.body.toLowerCase();
-      final queryLower = query.toLowerCase();
+        final filtered = posts.where((post) {
+          final titleLower = post.title.toLowerCase();
+          final bodyLower = post.body.toLowerCase();
+          final queryLower = query.toLowerCase();
 
-      return titleLower.contains(queryLower) || bodyLower.contains(queryLower);
-    }).toList();
+          return titleLower.contains(queryLower) ||
+              bodyLower.contains(queryLower);
+        }).toList();
 
-    state = state.copyWith(searchQuery: query, filteredPosts: filtered);
+        state = PostsState.success(
+          posts: posts,
+          filteredPosts: filtered,
+          searchQuery: query,
+        );
+      },
+      orElse: () {},
+    );
   }
 
   void updatePostLike(int postId, bool isLiked) {
-    final updatedPosts = state.posts.map((post) {
-      if (post.id == postId) {
-        return post.copyWith(isLiked: isLiked);
-      }
-      return post;
-    }).toList();
+    state.maybeWhen(
+      success: (posts, filteredPosts, searchQuery) {
+        final updatedPosts = posts.map((post) {
+          if (post.id == postId) {
+            return post.copyWith(isLiked: isLiked);
+          }
+          return post;
+        }).toList();
 
-    final updatedFilteredPosts = state.filteredPosts.map((post) {
-      if (post.id == postId) {
-        return post.copyWith(isLiked: isLiked);
-      }
-      return post;
-    }).toList();
+        final updatedFilteredPosts = filteredPosts.map((post) {
+          if (post.id == postId) {
+            return post.copyWith(isLiked: isLiked);
+          }
+          return post;
+        }).toList();
 
-    state = state.copyWith(
-      posts: updatedPosts,
-      filteredPosts: updatedFilteredPosts,
+        state = PostsState.success(
+          posts: updatedPosts,
+          filteredPosts: updatedFilteredPosts,
+          searchQuery: searchQuery,
+        );
+      },
+      orElse: () {},
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/native/notification_providers.dart';
 import '../../../../components/glass_container.dart';
 import '../../../../components/notification_settings_helper.dart';
+import '../../domain/entities/entities.dart';
 import '../notifiers/posts_notifier.dart';
 import '../state/posts_state.dart';
 import '../widgets/post_list_item.dart';
@@ -115,66 +116,77 @@ class _PostsListScreenState extends ConsumerState<PostsListScreen> {
   }
 
   Widget _buildBody(PostsState state) {
-    switch (state.status) {
-      case PostsStatus.initial:
-      case PostsStatus.loading:
-        return const Center(child: CircularProgressIndicator());
+    return state.when(
+      initial: _buildLoadingState,
+      loading: _buildLoadingState,
+      success: _buildPostsList,
+      error: _buildErrorState,
+    );
+  }
 
-      case PostsStatus.error:
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(
-                state.errorMessage ?? 'Ocurrió un error',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  ref.read(postsNotifierProvider.notifier).refreshPosts();
-                },
-                child: const Text('Reintentar'),
-              ),
-            ],
+  Widget _buildLoadingState() {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
           ),
-        );
-
-      case PostsStatus.success:
-        if (state.filteredPosts.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.search_off, size: 64, color: Colors.grey),
-                const SizedBox(height: 16),
-                Text(
-                  state.searchQuery.isEmpty
-                      ? 'No hay posts disponibles'
-                      : 'No se encontraron posts',
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () async {
-            await ref.read(postsNotifierProvider.notifier).refreshPosts();
-          },
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: state.filteredPosts.length,
-            itemBuilder: (context, index) {
-              final post = state.filteredPosts[index];
-              return PostListItem(post: post);
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(postsNotifierProvider.notifier).refreshPosts();
             },
+            child: const Text('Reintentar'),
           ),
-        );
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostsList(
+    List<PostEntity> posts,
+    List<PostEntity> filteredPosts,
+    String searchQuery,
+  ) {
+    if (filteredPosts.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.search_off, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              searchQuery.isEmpty
+                  ? 'No hay posts disponibles'
+                  : 'No se encontraron posts',
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      );
     }
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(postsNotifierProvider.notifier).refreshPosts();
+      },
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: filteredPosts.length,
+        itemBuilder: (context, index) {
+          final post = filteredPosts[index];
+          return PostListItem(post: post);
+        },
+      ),
+    );
   }
 }

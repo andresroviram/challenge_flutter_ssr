@@ -13,7 +13,7 @@ class PostDetailNotifier extends Notifier<PostDetailState> {
   @override
   PostDetailState build() {
     loadPostDetail(_postId);
-    return const PostDetailState();
+    return const PostDetailState.initial();
   }
 
   PostsUseCase get _useCase => ref.read(postsUseCaseProvider);
@@ -21,28 +21,18 @@ class PostDetailNotifier extends Notifier<PostDetailState> {
       ref.read(notificationServiceProvider);
 
   Future<void> loadPostDetail(int postId) async {
-    state = state.copyWith(status: PostDetailStatus.loading);
+    state = const PostDetailState.loading();
 
     final postResult = await _useCase.getPostById(postId);
     final commentsResult = await _useCase.getCommentsByPostId(postId);
 
     postResult.fold(
-      (failure) => state = state.copyWith(
-        status: PostDetailStatus.error,
-        errorMessage: failure.message,
-      ),
+      (failure) => state = PostDetailState.error(failure.message),
       (post) {
         commentsResult.fold(
-          (failure) => state = state.copyWith(
-            status: PostDetailStatus.error,
-            errorMessage: failure.message,
-          ),
+          (failure) => state = PostDetailState.error(failure.message),
           (comments) {
-            state = state.copyWith(
-              status: PostDetailStatus.success,
-              post: post,
-              comments: comments,
-            );
+            state = PostDetailState.success(post: post, comments: comments);
           },
         );
       },
@@ -50,36 +40,51 @@ class PostDetailNotifier extends Notifier<PostDetailState> {
   }
 
   Future<void> toggleLike() async {
-    if (state.post == null || state.isTogglingLike) return;
+    state.maybeWhen(
+      success: (post, comments, isTogglingLike) async {
+        if (isTogglingLike) return;
 
-    state = state.copyWith(isTogglingLike: true);
+        state = PostDetailState.success(
+          post: post,
+          comments: comments,
+          isTogglingLike: true,
+        );
 
-    final postId = state.post!.id;
-    final result = await _useCase.toggleLike(postId);
+        final postId = post.id;
+        final result = await _useCase.toggleLike(postId);
 
-    result.fold(
-      (failure) {
-        state = state.copyWith(
-          isTogglingLike: false,
-          errorMessage: failure.message,
+        result.fold(
+          (failure) {
+            state = PostDetailState.success(
+              post: post,
+              comments: comments,
+              isTogglingLike: false,
+            );
+            // Opcional: podrías usar un estado de error si prefieres
+          },
+          (newLikeState) {
+            final updatedPost = post.copyWith(isLiked: newLikeState);
+            state = PostDetailState.success(
+              post: updatedPost,
+              comments: comments,
+              isTogglingLike: false,
+            );
+
+            ref
+                .read(postsNotifierProvider.notifier)
+                .updatePostLike(postId, newLikeState);
+
+            if (newLikeState) {
+              _notificationService.showNotification(
+                id: postId.toString(),
+                title: 'Te ha gustado',
+                message: updatedPost.title,
+              );
+            }
+          },
         );
       },
-      (newLikeState) {
-        final updatedPost = state.post!.copyWith(isLiked: newLikeState);
-        state = state.copyWith(post: updatedPost, isTogglingLike: false);
-
-        ref
-            .read(postsNotifierProvider.notifier)
-            .updatePostLike(postId, newLikeState);
-
-        if (newLikeState) {
-          _notificationService.showNotification(
-            id: postId.toString(),
-            title: 'Te ha gustado',
-            message: updatedPost.title,
-          );
-        }
-      },
+      orElse: () {},
     );
   }
 }

@@ -22,7 +22,9 @@ class PostModel {
       _$PostModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PostModelToJson(this);
+}
 
+extension PostModelMapper on PostModel {
   PostEntity toEntity({bool isLiked = false}) => PostEntity(
     id: id,
     userId: userId,
