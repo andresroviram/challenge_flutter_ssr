@@ -51,8 +51,8 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
 
   Widget _buildBody(PostDetailState state) {
     return state.when(
-      initial: () => _buildLoadingState(),
-      loading: () => _buildLoadingState(),
+      initial: _buildLoadingState,
+      loading: _buildLoadingState,
       success: _buildSuccessState,
       error: _buildErrorState,
     );

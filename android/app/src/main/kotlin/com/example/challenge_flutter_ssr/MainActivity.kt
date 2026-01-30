@@ -18,5 +18,4 @@ class MainActivity : FlutterActivity() {
         NotificationApi.setUp(flutterEngine.dartExecutor.binaryMessenger, notificationHandler)
         createNotificationChannel(this, channelId)
     }
-
 }
