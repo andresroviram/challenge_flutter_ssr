@@ -35,3 +35,8 @@ abstract class NotificationApi {
 
   void openNotificationSettings();
 }
+
+@FlutterApi()
+abstract class NotificationCallback {
+  void onNotificationReceived(NotificationPayload payload);
+}
