@@ -14,6 +14,16 @@ PlatformException _createConnectionError(String channelName) {
     message: 'Unable to establish connection on channel: "$channelName".',
   );
 }
+
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
@@ -189,6 +199,41 @@ class NotificationApi {
       );
     } else {
       return;
+    }
+  }
+}
+
+abstract class NotificationCallback {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  void onNotificationReceived(NotificationPayload payload);
+
+  static void setUp(NotificationCallback? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.challenge_flutter_ssr.NotificationCallback.onNotificationReceived$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.challenge_flutter_ssr.NotificationCallback.onNotificationReceived was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final NotificationPayload? arg_payload = (args[0] as NotificationPayload?);
+          assert(arg_payload != null,
+              'Argument for dev.flutter.pigeon.challenge_flutter_ssr.NotificationCallback.onNotificationReceived was null, expected non-null NotificationPayload.');
+          try {
+            api.onNotificationReceived(arg_payload!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 }

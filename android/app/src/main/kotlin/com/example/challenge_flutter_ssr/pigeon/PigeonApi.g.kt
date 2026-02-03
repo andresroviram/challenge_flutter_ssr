@@ -15,6 +15,9 @@ import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 private object PigeonApiPigeonUtils {
 
+  fun createConnectionError(channelName: String): FlutterError {
+    return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+
   fun wrapResult(result: Any?): List<Any?> {
     return listOf(result)
   }
@@ -205,6 +208,32 @@ interface NotificationApi {
           channel.setMessageHandler(null)
         }
       }
+    }
+  }
+}
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+class NotificationCallback(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+  companion object {
+    /** The codec used by NotificationCallback. */
+    val codec: MessageCodec<Any?> by lazy {
+      PigeonApiPigeonCodec()
+    }
+  }
+  fun onNotificationReceived(payloadArg: NotificationPayload, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.challenge_flutter_ssr.NotificationCallback.onNotificationReceived$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(payloadArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(PigeonApiPigeonUtils.createConnectionError(channelName)))
+      } 
     }
   }
 }

@@ -10,6 +10,11 @@ class MainFlutterWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 
+    NotificationApiSetup.setUp(
+      binaryMessenger: flutterViewController.engine.binaryMessenger,
+      api: NotificationHandler.shared
+    )
+
     super.awakeFromNib()
   }
 }

@@ -6,11 +6,12 @@ class NotificationService {
 
   NotificationService(this._notificationApi);
 
-  Future<void> requestPermissions() async {
+  Future<bool> requestPermissions() async {
     try {
-      await _notificationApi.requestNotificationPermissions();
+      final granted = await _notificationApi.requestNotificationPermissions();
+      return granted;
     } catch (e) {
-      // Handle error silently or log
+      return false;
     }
   }
 
@@ -27,7 +28,7 @@ class NotificationService {
       );
       _notificationApi.showNotification(payload);
     } catch (e) {
-      // Handle error silently or log
+      // Handle error silently
     }
   }
 }
